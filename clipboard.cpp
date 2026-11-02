@@ -7,7 +7,8 @@ void Editor::select(Cursor start , Cursor end){
         swap(start,end);
     }
     selStart=start;
-    selEnd=end;hasSelection=true;
+    selEnd=end;
+    hasSelection=true;
 }
 
 void Editor::copy(){
@@ -44,7 +45,9 @@ void Editor::paste(){
         return;
     }
     if(hasSelection){
-        cut();
+        rawErase(selStart, selEnd);
+        cursor = selStart;
+        hasSelection = false;
     }
     Edit edit;
     edit.cursorBefore=cursor;
@@ -61,5 +64,6 @@ void Editor::paste(){
     recordEdit(edit);
 
 }
+
 
 
