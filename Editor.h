@@ -5,24 +5,26 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 class Editor {
 private:
-    // Core Data Members
-    std::vector<std::string> lines; // Text buffer lines (starts as {""})
+  
+    vector<string> lines;          
     Cursor cursor;                  // Current cursor position (line, col)
     Cursor selStart;                // Selection start position
     Cursor selEnd;                  // Selection end position
     bool hasSelection;              // True if a selection is active
-    std::string clipboard;          // Text stored in clipboard
+    string clipboard;          // Text stored in clipboard
     
     // History Stacks
     Stack<Edit> undoStack;          // Undo history stack
     Stack<Edit> redoStack;          // Redo history stack
 
-    // Private Helper Functions (buffer.cpp & history.cpp)
+    // Private Helper Functions used in buffer.cpp & history.cpp
     void rawInsert(Cursor pos, const std::string& text);
     void rawErase(Cursor start, Cursor end);
-    std::string getRange(Cursor start, Cursor end) const;
+    string getRange(Cursor start, Cursor end) const;
     void recordEdit(const Edit& edit);
 
 public:
@@ -30,13 +32,13 @@ public:
     Editor();
 
     // File I/O (fileio.cpp)
-    void load(const std::string& filename);
-    void save(const std::string& filename);
+    void load(const string& filename);
+    void save(const string& filename);
     void show() const;
 
     // Buffer Operations (buffer.cpp)
     void moveCursor(int line, int col);
-    void insertText(const std::string& text);
+    void insertText(const string& text);
     void deleteChars(int n);
 
     // Clipboard Operations (clipboard.cpp)
@@ -46,8 +48,8 @@ public:
     void paste();
 
     // Search Operations (search.cpp)
-    std::vector<Cursor> find(const std::string& target) const;
-    int replaceAll(const std::string& oldStr, const std::string& newStr);
+    std::vector<Cursor> find(const string& target) const;
+    int replaceAll(const string& oldStr, const string& newStr);
 
     // History Operations (history.cpp)
     void undo();
