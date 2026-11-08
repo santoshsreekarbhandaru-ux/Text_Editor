@@ -131,6 +131,7 @@ void Editor::deleteChars(int n){
         end.col=lines[end.line].size();
     }
     string erased=getRange(end,cursor);
+    if(erased.empty()) return;
     Edit t;
     t.cursorBefore=cursor;
     t.changes.push_back({end,erased,false});
