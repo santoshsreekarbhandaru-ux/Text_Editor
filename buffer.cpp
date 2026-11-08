@@ -80,7 +80,7 @@ void Editor::rawErase(Cursor start,Cursor end){
     moveCursor(start.line,start.col);
 }
 
-string Editor::getRange(Cursor start,Cursor end){
+string Editor::getRange(Cursor start,Cursor end) const{
     //right exclusive
     string answer;
     if(start.line<0 || end.line<0 || start.col<0 || end.col<0) return "";
@@ -107,7 +107,7 @@ void Editor::insertText(const string& text){
 
     Edit t;
     t.cursorBefore=cursor;
-    t.changes.push_back({true,cursor,text});
+    t.changes.push_back({cursor,text,true});
     rawInsert(cursor,text);
     t.cursorAfter=cursor;
     hasSelection=false; // think about this
@@ -133,7 +133,7 @@ void Editor::deleteChars(int n){
     string erased=getRange(end,cursor);
     Edit t;
     t.cursorBefore=cursor;
-    t.changes.push_back({false,end,erased});
+    t.changes.push_back({end,erased,false});
     rawErase(end,cursor);
     t.cursorAfter=cursor;
     hasSelection=false; // think about this
