@@ -78,9 +78,20 @@ int main() {
             }
         }
         // TODO Task 2: move, insert, delete
+        else if(input == "move"){}
+        else if(input == "insert"){}
+        else if(input == "delete"){}
         // TODO Task 3: select, copy, cut, paste
+        else if(input == "select"){}
+        else if(input == "copy"){}
+        else if(input == "cut"){}
+        else if(input == "paste"){}
         // TODO Task 4: find, replace
+        else if(input == "find"){}
+        else if(input =="replace"){}
         // TODO Task 5: undo, redo
+        else if(input == "undo"){}
+        else if(input == "redo"){}
         else {
             cout << "Unknown command.\n";
         }
