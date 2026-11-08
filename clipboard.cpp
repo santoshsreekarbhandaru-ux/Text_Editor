@@ -41,6 +41,9 @@ void Editor::cut(){
 }
 
 void Editor::paste(){
+    Edit edit;
+    edit.cursorBefore=cursor;
+    
     if(clipboard.empty()){
         return;
     }
@@ -49,8 +52,7 @@ void Editor::paste(){
         cursor = selStart;
         hasSelection = false;
     }
-    Edit edit;
-    edit.cursorBefore=cursor;
+    
 
     Change change;
     change.isInsert=true;

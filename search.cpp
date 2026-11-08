@@ -13,7 +13,7 @@ vector<Cursor> Editor::find(const string& target)const{
             Cursor c;
             c.line=i;
             c.col=(int)pos;
-            if((pos>0 && k.find(lines[i][pos-1])!=-1) || (pos < lines[i].size() && k.find(lines[i][pos+1])!=-1)){
+            if((pos>0 && k.find(lines[i][pos-1])!=-1) || (pos < lines[i].size() && k.find(lines[i][pos+target.size()])!=-1)){
             pos=lines[i].find(target, pos+1);
             continue;
             }
