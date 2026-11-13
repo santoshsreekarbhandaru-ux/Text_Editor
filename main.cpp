@@ -30,7 +30,8 @@ static void printHelp() {
          << "  find <word>                   list whole-word matches\n"
          << "  replace <old> <new>           replace all whole-word matches\n"
          << "  undo | redo\n"
-         << "  help | quit\n";
+         << "  help | quit\n"
+         << "  save <file>\n";
 }
 
 int main() {
@@ -139,14 +140,16 @@ int main() {
         else if (cmd == "redo") {
             ed.redo();
         }
+        else if (cmd == "save") {
+            string target;
+            iss >> target;                       // optional: "save other.txt"
+            if (target.empty()) target = fileName;   // plain "save" uses the loaded file name
+            if (ed.save(target)) cout << "Saved to " << target << ".\n";
+            else cout << "Could not save.\n";
+        }
         else {
             cout << "Unknown command. Type 'help'.\n";
         }
     }
-
-    // 3. SAVE
-    if (ed.save(fileName)) cout << "Saved.\n";
-    else cout << "Could not save.\n";
-
     return 0;
 }
