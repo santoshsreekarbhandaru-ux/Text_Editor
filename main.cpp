@@ -1,11 +1,12 @@
 #include <iostream>
-#include <sstream>
+#include <sstream> 
 #include <string>
 #include <vector>
-#include "Editor.h"
+#include "Editor.h" 
 using namespace std;
 
 // They now live inside the Editor class (buffer.cpp, fileio.cpp).
+
 static string unescape(const string& s) {
     string out;
     for (size_t i = 0; i < s.size(); i++) {
@@ -30,22 +31,22 @@ static void printHelp() {
          << "  find <word>                   list whole-word matches\n"
          << "  replace <old> <new>           replace all whole-word matches\n"
          << "  undo | redo\n"
-         << "  help | quit\n"
-         << "  save <file>\n";
+         << "  help | quit\n";
 }
 
 int main() {
-    Editor ed;
+    Editor ed; 
 
     string fileName;
     cout << "Enter file name: ";
     getline(cin, fileName);
 
     // 1. LOAD
-    if (ed.load(fileName)) {
+    if (ed.load(fileName)) { 
         cout << "Loaded file.\n";
     } else {
         cout << "File not found. Starting with an empty document.\n";
+
     }
     cout << "Type 'help' to see the commands.\n";
 
@@ -69,7 +70,7 @@ int main() {
         else if (cmd == "show") {
             ed.show();
         }
-        // Task 2: move, insert, delete   (claude edited: implemented)
+        // Task 2: move, insert, delete 
         else if (cmd == "move") {
             int l, c;
             if (iss >> l >> c) ed.moveCursor(l, c);
@@ -78,7 +79,7 @@ int main() {
         else if (cmd == "insert") {
             string text;
             getline(iss, text);
-            if (!text.empty() && text[0] == ' ') text.erase(0, 1); // drop the space after the command
+            if (!text.empty() && text[0] == ' ') text.erase(0, 1);   // drop the space after the command
             if (text.empty()) cout << "Usage: insert <text>\n";
             else ed.insertText(unescape(text));
     
@@ -88,7 +89,7 @@ int main() {
             if (iss >> n) ed.deleteChars(n);
             else cout << "Usage: delete <n>\n";
         }
-        // Task 3: select, copy, cut, paste   (claude edited: implemented)
+        // Task 3: select, copy, cut, paste 
         else if (cmd == "select") {
             int l1, c1, l2, c2;
             if (iss >> l1 >> c1 >> l2 >> c2) {
@@ -109,7 +110,7 @@ int main() {
         else if (cmd == "paste") {
             ed.paste();
         }
-        // Task 4: find, replace
+        // Task 4: find, replace 
         else if (cmd == "find") {
             string target;
             iss >> target;
@@ -133,13 +134,14 @@ int main() {
                 cout << count << " replacement(s).\n";
             }
         }
-        // Task 5: undo, redo
+        // Task 5: undo, redo 
         else if (cmd == "undo") {
             ed.undo();
         }
         else if (cmd == "redo") {
             ed.redo();
         }
+        // Task 6:save
         else if (cmd == "save") {
             string target;
             iss >> target;                       // optional: "save other.txt"
@@ -150,6 +152,12 @@ int main() {
         else {
             cout << "Unknown command. Type 'help'.\n";
         }
+    
     }
+
+    // 3. SAVE
+    if (ed.save(fileName)) cout << "Saved.\n"; 
+    else cout << "Could not save.\n";
+
     return 0;
 }
