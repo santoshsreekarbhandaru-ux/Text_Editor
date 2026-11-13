@@ -4,8 +4,6 @@
 
 using namespace std;
 
-// claude edited: endOfText was removed from here, it now lives in Edit.h (shared by all files)
-
 void Editor::recordEdit(const Edit& edit) 
 {
     undoStack.push(edit);
@@ -32,7 +30,7 @@ void Editor::undo()
         } 
         else 
         {
-            rawInsert(c.pos, c.text);   // claude edited: works now because rawInsert takes const string&
+            rawInsert(c.pos, c.text);
         }
     }
 
@@ -58,7 +56,7 @@ void Editor::redo()
 
         if (c.isInsert) 
         {
-            rawInsert(c.pos, c.text);   // claude edited: works now because rawInsert takes const string&
+            rawInsert(c.pos, c.text);
         } 
         else 
         {

@@ -18,12 +18,10 @@ public:
         cnt = 0;
     }
 
-    // claude edited: destructor added so nodes are freed (was a memory leak)
     ~Stack() {
         clear();
     }
 
-    // claude edited: copying is disabled, a copy would share nodes and double-delete them
     Stack(const Stack&) = delete;
     Stack& operator=(const Stack&) = delete;
 
@@ -49,11 +47,11 @@ public:
         return data;
     }
 
-    bool isEmpty() const {   // claude edited: made const
+    bool isEmpty() const {
         return head == nullptr;
     }
 
-    int size() const {       // claude edited: made const
+    int size() const {
         return cnt;
     }
 

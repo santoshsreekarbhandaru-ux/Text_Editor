@@ -3,7 +3,6 @@
 using namespace std;
 
 void Editor::select(Cursor start , Cursor end){
-    // claude edited: added parentheses around the && so the intent is clear (same logic as before)
     if(start.line>end.line|| (start.line==end.line && start.col>end.col)){
         swap(start,end);
     }
@@ -24,7 +23,7 @@ void Editor::cut(){
         return;
     }
     copy();
-    if(clipboard.empty()){   // claude edited: empty/invalid selection, nothing to cut so don't record a useless edit
+    if(clipboard.empty()){
         hasSelection=false;
         return;
     }
@@ -50,11 +49,9 @@ void Editor::paste(){
         return;
     }
     Edit edit;
-    edit.cursorBefore=cursor;   // claude edited: moved above the selection erase so undo restores the cursor properly
+    edit.cursorBefore=cursor;
 
     if(hasSelection){
-        // claude edited: the erase of the selected text is now recorded in the same Edit,
-        // so one undo restores both the old selected text and removes the pasted text
         Change erased;
         erased.isInsert=false;
         erased.pos=selStart;
@@ -73,7 +70,7 @@ void Editor::paste(){
     edit.changes.push_back(change);
 
     rawInsert(cursor,clipboard);
-    cursor=endOfText(cursor,clipboard);   // claude edited: cursor now moves to the end of the pasted text
+    cursor=endOfText(cursor,clipboard);
     edit.cursorAfter=cursor;
 
     recordEdit(edit);

@@ -1,14 +1,11 @@
 #include <iostream>
-#include <sstream>   // claude edited: needed to split the command line into words
+#include <sstream>
 #include <string>
 #include <vector>
-#include "Editor.h"  // claude edited: main now uses the Editor class
+#include "Editor.h"
 using namespace std;
 
-// claude edited: the global lines/curLine/curCol, readLine, loadFile and saveFile were removed from here.
 // They now live inside the Editor class (buffer.cpp, fileio.cpp).
-
-// claude edited: lets you type \n inside an insert command to mean a new line
 static string unescape(const string& s) {
     string out;
     for (size_t i = 0; i < s.size(); i++) {
@@ -22,7 +19,6 @@ static string unescape(const string& s) {
     return out;
 }
 
-// claude edited: list of commands printed by "help"
 static void printHelp() {
     cout << "Commands:\n"
          << "  show                          print the document\n"
@@ -38,18 +34,17 @@ static void printHelp() {
 }
 
 int main() {
-    Editor ed;   // claude edited: the editor object that holds the document
+    Editor ed;
 
     string fileName;
     cout << "Enter file name: ";
     getline(cin, fileName);
 
     // 1. LOAD
-    if (ed.load(fileName)) {   // claude edited: uses Editor::load
+    if (ed.load(fileName)) {
         cout << "Loaded file.\n";
     } else {
         cout << "File not found. Starting with an empty document.\n";
-        // claude edited: nothing else needed, the Editor constructor already starts with one empty line
     }
     cout << "Type 'help' to see the commands.\n";
 
@@ -59,7 +54,6 @@ int main() {
         cout << "> ";
         if (!getline(cin, input)) break;       // stop if input ends (Ctrl+D / Ctrl+Z)
 
-        // claude edited: split the line into a command word and its arguments
         istringstream iss(input);
         string cmd;
         iss >> cmd;
@@ -83,7 +77,7 @@ int main() {
         else if (cmd == "insert") {
             string text;
             getline(iss, text);
-            if (!text.empty() && text[0] == ' ') text.erase(0, 1);   // drop the space after the command
+            if (!text.empty() && text[0] == ' ') text.erase(0, 1); // drop the space after the command
             if (text.empty()) cout << "Usage: insert <text>\n";
             else ed.insertText(unescape(text));
     
@@ -114,7 +108,7 @@ int main() {
         else if (cmd == "paste") {
             ed.paste();
         }
-        // Task 4: find, replace   (claude edited: implemented)
+        // Task 4: find, replace
         else if (cmd == "find") {
             string target;
             iss >> target;
@@ -138,7 +132,7 @@ int main() {
                 cout << count << " replacement(s).\n";
             }
         }
-        // Task 5: undo, redo   (claude edited: implemented)
+        // Task 5: undo, redo
         else if (cmd == "undo") {
             ed.undo();
         }
@@ -151,7 +145,7 @@ int main() {
     }
 
     // 3. SAVE
-    if (ed.save(fileName)) cout << "Saved.\n";   // claude edited: uses Editor::save
+    if (ed.save(fileName)) cout << "Saved.\n";
     else cout << "Could not save.\n";
 
     return 0;

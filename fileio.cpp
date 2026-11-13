@@ -1,4 +1,3 @@
-// claude edited: this whole file is new. load/save/show were declared in Editor.h but never defined.
 // The code is moved from main.cpp (readLine, loadFile, saveFile) into the Editor class.
 #include "Editor.h"
 #include <cstdio>
@@ -15,14 +14,14 @@ static bool readLine(FILE* f, string& line) {
         if (c == '\n') break;
         line += (char)c;
     }
-    if (!line.empty() && line.back() == '\r') line.pop_back();   // claude edited: strip \r from Windows line endings
+    if (!line.empty() && line.back() == '\r') line.pop_back();
     return gotAny;
 }
 
 // file -> lines
 bool Editor::load(const string& filename) {
     FILE* in = fopen(filename.c_str(), "r");
-    if (!in) return false;                 // file does not exist
+    if (!in) return false; // file does not exist
 
     lines.clear();
     string line;
@@ -31,11 +30,11 @@ bool Editor::load(const string& filename) {
     }
     fclose(in);
 
-    if (lines.size() == 0) lines.push_back("");   // never keep the vector empty
+    if (lines.size() == 0) lines.push_back(""); // never keep the vector empty
     cursor.line = 0;
     cursor.col = 0;
     hasSelection = false;
-    undoStack.clear();   // history of the old document no longer applies
+    undoStack.clear(); // history of the old document no longer applies
     redoStack.clear();
     return true;
 }

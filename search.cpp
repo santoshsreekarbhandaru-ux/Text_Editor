@@ -1,9 +1,9 @@
-#include <string>    // claude edited: replaced <bits/stdc++.h> (GCC only) with the standard headers
+#include <string> 
 #include <vector>
 #include "Editor.h"
 using namespace std;
 
-static const string k = " .!-,:;";   // claude edited: static const so it doesn't clash with other files
+static const string k = " .!-,:;";
 
 // Find every place where target appears. Returns (line, col) of each match.
 vector<Cursor> Editor::find(const string& target)const{
@@ -15,10 +15,6 @@ vector<Cursor> Editor::find(const string& target)const{
             Cursor c;
             c.line=i;
             c.col=(int)pos;
-
-            // claude edited: the old check was inverted (it SKIPPED matches that had a separator next to them).
-            // Now a match is kept only if it is a whole word: start of line or a separator before it,
-            // and end of line or a separator after it.
             size_t after=pos+target.size();
             bool leftOK  = (pos==0) || (k.find(lines[i][pos-1])!=string::npos);
             bool rightOK = (after>=lines[i].size()) || (k.find(lines[i][after])!=string::npos);
@@ -26,7 +22,6 @@ vector<Cursor> Editor::find(const string& target)const{
             if(leftOK && rightOK){
                 result.push_back(c);
             }
-            // claude edited: advance by target size (was pos+1) so overlapping matches like "aa" in "aaa" don't corrupt replaceAll
             pos=lines[i].find(target, pos+target.size());
         }
     }
@@ -40,7 +35,7 @@ int Editor::replaceAll(const string& oldStr,const string& newStr){
     if (matches.empty()) return 0;
     Edit edit;
     edit.cursorBefore=cursor;
-    for (int idx=(int)matches.size()-1; idx>=0; idx--){   // claude edited: renamed loop variable k to idx (k is the global separator string)
+    for (int idx=(int)matches.size()-1; idx>=0; idx--){
         Cursor start=matches[idx];
         Cursor end;
         end.line=start.line;
@@ -62,7 +57,6 @@ int Editor::replaceAll(const string& oldStr,const string& newStr){
         }
     }
     hasSelection = false;
-    // claude edited: cast to int so the comparisons are signed-safe
     if (cursor.line>=(int)lines.size()) cursor.line=(int)lines.size()-1;
     if (cursor.col>(int)lines[cursor.line].size()) cursor.col=(int)lines[cursor.line].size();
     edit.cursorAfter=cursor;

@@ -1,12 +1,12 @@
 #include "Editor.h"
 #include <string>
 #include <vector>
-#include <algorithm>   // claude edited: needed for min()
+#include <algorithm>
 using namespace std;
 
-// claude edited: constructor was declared but never defined
+
 Editor::Editor(){
-    lines.push_back("");     // document is never empty
+    lines.push_back(""); // document is never empty
     cursor.line=0;
     cursor.col=0;
     selStart=cursor;
@@ -14,7 +14,6 @@ Editor::Editor(){
     hasSelection=false;
 }
 
-// claude edited: moveCursor was declared but never defined
 void Editor::moveCursor(int line, int col){
     if(line<0) line=0;
     if(line>=(int)lines.size()) line=(int)lines.size()-1;
@@ -24,7 +23,6 @@ void Editor::moveCursor(int line, int col){
     cursor.col=col;
 }
 
-// claude edited: insertText was declared but never defined
 void Editor::insertText(const string& text){
     if(text.empty()) return;
 
@@ -38,14 +36,13 @@ void Editor::insertText(const string& text){
     edit.changes.push_back(change);
 
     rawInsert(cursor,text);
-    cursor=endOfText(cursor,text);   // cursor goes to the end of inserted text
+    cursor=endOfText(cursor,text); // cursor goes to the end of inserted text
     edit.cursorAfter=cursor;
     hasSelection=false;
 
     recordEdit(edit);
 }
 
-// claude edited: deleteChars was declared but never defined (forward delete of n characters from the cursor)
 void Editor::deleteChars(int n){
     if(n<=0) return;
 
@@ -57,7 +54,7 @@ void Editor::deleteChars(int n){
             n-=s;
         }
         else if(start.line>0){
-            start.line--;     // backspace at column 0 joins with the previous line
+            start.line--;  // backspace at column 0 joins with the previous line
             start.col=(int)lines[start.line].size();
             n--;
         }
@@ -77,20 +74,19 @@ void Editor::deleteChars(int n){
     edit.changes.push_back(change);
 
     rawErase(start,cursor);
-    cursor=start;             // cursor moves back to where the deletion began
+    cursor=start; // cursor moves back to where the deletion began
     edit.cursorAfter=cursor;
     hasSelection=false;
 
     recordEdit(edit);
 }
 
-void Editor::rawInsert(Cursor pos,const string& text){   // claude edited: const string&
+void Editor::rawInsert(Cursor pos,const string& text){
     //cursor position changes are not handled yet
     if(text.empty()==true) return;
 
-    int n=(int)lines.size();   // claude edited: signed copy of size, lines.size()-1 on unsigned is unsafe
+    int n=(int)lines.size();
 
-    // claude edited: negative check moved first (negative int compared with unsigned size became a huge number)
     if(pos.line<0){
         pos.line=0;
         pos.col=0;
@@ -107,7 +103,7 @@ void Editor::rawInsert(Cursor pos,const string& text){   // claude edited: const
     vector<string> split;
     int start=0;
 
-    for(int i=start;i<(int)text.length();i++){   // claude edited: cast to int
+    for(int i=start;i<(int)text.length();i++){
         if(text[i]=='\n'){
             split.push_back(text.substr(start,i-start));
             start=i+1;
@@ -133,10 +129,10 @@ void Editor::rawInsert(Cursor pos,const string& text){   // claude edited: const
 void Editor::rawErase(Cursor start,Cursor end){
     //right exclusive
     string t;
-    int n=(int)lines.size();   // claude edited: signed size so negative checks work
-    if(start.line<0 || start.col<0) return;   // claude edited: moved before the indexing checks
+    int n=(int)lines.size();
+    if(start.line<0 || start.col<0) return; 
     if(start.line>=n || start.col>(int)lines[start.line].size()) return;
-    if(end.line<0 || end.col<0) return;       // claude edited: added negative check for end
+    if(end.line<0 || end.col<0) return;
     if(end.line>=n || end.col>(int)lines[end.line].size()) return;
     if(start.line>end.line) return;
     if(start.line==end.line && start.col>=end.col) return;
@@ -151,12 +147,11 @@ void Editor::rawErase(Cursor start,Cursor end){
 }
 
 string Editor::getRange(Cursor start,Cursor end){
-    //right exclusive
     string answer;
-    int n=(int)lines.size();   // claude edited: signed size so negative checks work
-    if(start.line<0 || start.col<0) return "";   // claude edited: moved before the indexing checks
+    int n=(int)lines.size();
+    if(start.line<0 || start.col<0) return "";
     if(start.line>=n || start.col>(int)lines[start.line].size()) return "";
-    if(end.line<0 || end.col<0) return "";       // claude edited: added negative check for end
+    if(end.line<0 || end.col<0) return "";
     if(end.line>=n || end.col>(int)lines[end.line].size()) return "";
     if(start.line>end.line) return "";
     if(start.line==end.line && start.col>=end.col) return "";
