@@ -4,24 +4,7 @@
 
 using namespace std;
 
-static Cursor endOfText(Cursor start, const string& text) 
-{
-    Cursor end = start;
-
-    for (char ch : text) 
-    {
-        if (ch == '\n') 
-        {
-            end.line++;
-            end.col = 0;   // new line starts at column 0
-        } 
-        else 
-        {
-            end.col++;
-        }
-    }
-    return end;
-}
+// claude edited: endOfText was removed from here, it now lives in Edit.h (shared by all files)
 
 void Editor::recordEdit(const Edit& edit) 
 {
@@ -49,7 +32,7 @@ void Editor::undo()
         } 
         else 
         {
-            rawInsert(c.pos, c.text);
+            rawInsert(c.pos, c.text);   // claude edited: works now because rawInsert takes const string&
         }
     }
 
@@ -75,7 +58,7 @@ void Editor::redo()
 
         if (c.isInsert) 
         {
-            rawInsert(c.pos, c.text);
+            rawInsert(c.pos, c.text);   // claude edited: works now because rawInsert takes const string&
         } 
         else 
         {

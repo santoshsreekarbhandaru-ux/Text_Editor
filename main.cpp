@@ -1,67 +1,57 @@
 #include <iostream>
-#include <cstdio>
+#include <sstream>   // claude edited: needed to split the command line into words
 #include <string>
 #include <vector>
+#include "Editor.h"  // claude edited: main now uses the Editor class
 using namespace std;
 
-vector<string> lines;         
-int curLine = 0, curCol = 0;   // cursor (will be used by Task 2)
+// claude edited: the global lines/curLine/curCol, readLine, loadFile and saveFile were removed from here.
+// They now live inside the Editor class (buffer.cpp, fileio.cpp).
 
-bool readLine(FILE* f, string& line) {
-    line.clear();
-    int c;
-    bool gotAny = false;
-    while ((c = fgetc(f)) != EOF) {
-        gotAny = true;
-        if (c == '\n') break;
-        line += (char)c;
+// claude edited: lets you type \n inside an insert command to mean a new line
+static string unescape(const string& s) {
+    string out;
+    for (size_t i = 0; i < s.size(); i++) {
+        if (s[i] == '\\' && i + 1 < s.size() && s[i + 1] == 'n') {
+            out += '\n';
+            i++;
+        } else {
+            out += s[i];
+        }
     }
-    return gotAny;
+    return out;
 }
 
-// Task 1: file -> vector
-bool loadFile(string path) {
-    FILE* in = fopen(path.c_str(), "r");
-    if (!in) return false;                 // file does not exist
-
-    lines.clear();
-    string line;
-    while (readLine(in, line)) {
-        lines.push_back(line);
-    }
-    fclose(in);
-
-    if (lines.size() == 0) lines.push_back("");   // never keep the vector empty
-    curLine = 0;
-    curCol = 0;
-    return true;
-}
-
-// Task 1: vector -> file
-bool saveFile(string path) {
-    FILE* out = fopen(path.c_str(), "w");
-    if (!out) return false;
-
-    for (int i = 0; i < (int)lines.size(); i++) {
-        fputs(lines[i].c_str(), out);
-        fputc('\n', out);
-    }
-    fclose(out);
-    return true;
+// claude edited: list of commands printed by "help"
+static void printHelp() {
+    cout << "Commands:\n"
+         << "  show                          print the document\n"
+         << "  move <line> <col>             move the cursor\n"
+         << "  insert <text>                 insert text at the cursor (use \\n for a new line)\n"
+         << "  delete <n>                    delete n characters after the cursor\n"
+         << "  select <l1> <c1> <l2> <c2>    select a range\n"
+         << "  copy | cut | paste\n"
+         << "  find <word>                   list whole-word matches\n"
+         << "  replace <old> <new>           replace all whole-word matches\n"
+         << "  undo | redo\n"
+         << "  help | quit\n";
 }
 
 int main() {
+    Editor ed;   // claude edited: the editor object that holds the document
+
     string fileName;
     cout << "Enter file name: ";
     getline(cin, fileName);
 
     // 1. LOAD
-    if (loadFile(fileName)) {
-        cout << "Loaded " << lines.size() << " line(s).\n";
+    if (ed.load(fileName)) {   // claude edited: uses Editor::load
+        cout << "Loaded file.\n";
     } else {
         cout << "File not found. Starting with an empty document.\n";
-        lines.push_back("");
+        // claude edited: nothing else needed, the Editor constructor already starts with one empty line
     }
+    cout << "Type 'help' to see the commands.\n";
 
     // 2. COMMAND LOOP 
     string input;
@@ -69,36 +59,99 @@ int main() {
         cout << "> ";
         if (!getline(cin, input)) break;       // stop if input ends (Ctrl+D / Ctrl+Z)
 
-        if (input == "quit") {
+        // claude edited: split the line into a command word and its arguments
+        istringstream iss(input);
+        string cmd;
+        iss >> cmd;
+        if (cmd.empty()) continue;
+
+        if (cmd == "quit") {
             break;
         }
-        else if (input == "show") {            // temporary, to check that loading worked
-            for (int i = 0; i < (int)lines.size(); i++) {
-                cout << i << "| " << lines[i] << "\n";
+        else if (cmd == "help") {
+            printHelp();
+        }
+        else if (cmd == "show") {
+            ed.show();
+        }
+        // Task 2: move, insert, delete   (claude edited: implemented)
+        else if (cmd == "move") {
+            int l, c;
+            if (iss >> l >> c) ed.moveCursor(l, c);
+            else cout << "Usage: move <line> <col>\n";
+        }
+        else if (cmd == "insert") {
+            string text;
+            getline(iss, text);
+            if (!text.empty() && text[0] == ' ') text.erase(0, 1);   // drop the space after the command
+            if (text.empty()) cout << "Usage: insert <text>\n";
+            else ed.insertText(unescape(text));
+    
+        }
+        else if (cmd == "delete") {
+            int n;
+            if (iss >> n) ed.deleteChars(n);
+            else cout << "Usage: delete <n>\n";
+        }
+        // Task 3: select, copy, cut, paste   (claude edited: implemented)
+        else if (cmd == "select") {
+            int l1, c1, l2, c2;
+            if (iss >> l1 >> c1 >> l2 >> c2) {
+                Cursor a, b;
+                a.line = l1; a.col = c1;
+                b.line = l2; b.col = c2;
+                ed.select(a, b);
+            } else {
+                cout << "Usage: select <l1> <c1> <l2> <c2>\n";
             }
         }
-        // TODO Task 2: move, insert, delete
-        else if(input == "move"){}
-        else if(input == "insert"){}
-        else if(input == "delete"){}
-        // TODO Task 3: select, copy, cut, paste
-        else if(input == "select"){}
-        else if(input == "copy"){}
-        else if(input == "cut"){}
-        else if(input == "paste"){}
-        // TODO Task 4: find, replace
-        else if(input == "find"){}
-        else if(input =="replace"){}
-        // TODO Task 5: undo, redo
-        else if(input == "undo"){}
-        else if(input == "redo"){}
+        else if (cmd == "copy") {
+            ed.copy();
+        }
+        else if (cmd == "cut") {
+            ed.cut();
+        }
+        else if (cmd == "paste") {
+            ed.paste();
+        }
+        // Task 4: find, replace   (claude edited: implemented)
+        else if (cmd == "find") {
+            string target;
+            iss >> target;
+            if (target.empty()) {
+                cout << "Usage: find <word>\n";
+            } else {
+                vector<Cursor> res = ed.find(target);
+                for (size_t i = 0; i < res.size(); i++) {
+                    cout << "line " << res[i].line << ", col " << res[i].col << "\n";
+                }
+                cout << res.size() << " match(es).\n";
+            }
+        }
+        else if (cmd == "replace") {
+            string a, b;
+            iss >> a >> b;
+            if (a.empty()) {
+                cout << "Usage: replace <old> <new>\n";
+            } else {
+                int count = ed.replaceAll(a, b);
+                cout << count << " replacement(s).\n";
+            }
+        }
+        // Task 5: undo, redo   (claude edited: implemented)
+        else if (cmd == "undo") {
+            ed.undo();
+        }
+        else if (cmd == "redo") {
+            ed.redo();
+        }
         else {
-            cout << "Unknown command.\n";
+            cout << "Unknown command. Type 'help'.\n";
         }
     }
 
     // 3. SAVE
-    if (saveFile(fileName)) cout << "Saved.\n";
+    if (ed.save(fileName)) cout << "Saved.\n";   // claude edited: uses Editor::save
     else cout << "Could not save.\n";
 
     return 0;
