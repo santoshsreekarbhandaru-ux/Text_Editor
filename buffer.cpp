@@ -21,6 +21,7 @@ void Editor::moveCursor(int line, int col){
     if(col>(int)lines[line].size()) col=(int)lines[line].size();
     cursor.line=line;
     cursor.col=col;
+    hasSelection = false;
 }
 
 void Editor::insertText(const string& text){
