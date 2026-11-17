@@ -16,8 +16,8 @@ vector<Cursor> Editor::find(const string& target)const{
             c.line=i;
             c.col=(int)pos;
             size_t after=pos+target.size();
-            bool leftOK  = (pos==0) || (k.find(lines[i][pos-1])!=string::npos);
-            bool rightOK = (after>=lines[i].size()) || (k.find(lines[i][after])!=string::npos);
+            bool leftOK = (pos==0)||(k.find(lines[i][pos-1])!=string::npos);
+            bool rightOK =(after>=lines[i].size())||(k.find(lines[i][after])!=string::npos);
 
             if(leftOK && rightOK){
                 result.push_back(c);
