@@ -44,7 +44,7 @@ void Editor::insertText(const string& text){
     recordEdit(edit);
 }
 
-void Editor::deleteChars(int n){
+void Editor::deleteChars(int n){ // deletes n characters
     if(n<=0) return;
 
     Cursor start=cursor;

@@ -149,6 +149,14 @@ int main() {
             if (ed.save(target)) cout << "Saved to " << target << ".\n";
             else cout << "Could not save.\n";
         }
+        else if(cmd == "remove"){
+            ed.remove();
+        }
+        else if(cmd == "delLine"){
+            unsigned int k;
+            cin >> k;
+            ed.deleteLine(k);
+        }
         else {
             cout << "Unknown command. Type 'help'.\n";
         }

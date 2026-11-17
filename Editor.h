@@ -44,7 +44,8 @@ public:
     void copy();
     void cut();
     void paste();
-
+    void remove();
+    void deleteLine(unsigned int k);
     // Search Operations (search.cpp)
     std::vector<Cursor> find(const std::string& target) const;
     int replaceAll(const std::string& oldStr, const std::string& newStr);
