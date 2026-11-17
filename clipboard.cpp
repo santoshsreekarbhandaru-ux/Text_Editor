@@ -91,26 +91,6 @@ void Editor::remove(){
     recordEdit(edit);
 }
 
-// void Editor::deleteLine(unsigned int k){
-//     Cursor c1;
-//     Cursor c2;
-//     c1.line = k;
-//     c1.col = 0;
-
-//     if( lines.size() > k+1 && k>0){
-//         c2.line = k+1;
-//         c2.col = 0;
-//         select(c1,c2);
-//         remove();
-//     }
-//     else if(lines.size()==k+1 && k>0){
-//         c2.line = k+1;
-//         c2.col=lines[k].size()-1;
-//         select(c1, c2);
-//         remove();
-//     }
-// }
-
 void Editor::deleteLine(unsigned int k) {
     if (k >= lines.size()) {
         cout << "Invalid line number.\n";
