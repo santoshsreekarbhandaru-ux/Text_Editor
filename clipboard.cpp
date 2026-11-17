@@ -91,22 +91,50 @@ void Editor::remove(){
     recordEdit(edit);
 }
 
-void Editor::deleteLine(unsigned int k){
-    Cursor c1;
-    Cursor c2;
+// void Editor::deleteLine(unsigned int k){
+//     Cursor c1;
+//     Cursor c2;
+//     c1.line = k;
+//     c1.col = 0;
+
+//     if( lines.size() > k+1 && k>0){
+//         c2.line = k+1;
+//         c2.col = 0;
+//         select(c1,c2);
+//         remove();
+//     }
+//     else if(lines.size()==k+1 && k>0){
+//         c2.line = k+1;
+//         c2.col=lines[k].size()-1;
+//         select(c1, c2);
+//         remove();
+//     }
+// }
+
+void Editor::deleteLine(unsigned int k) {
+    if (k >= lines.size()) {
+        cout << "Invalid line number.\n";
+        return;
+    }
+    Cursor c1, c2;
     c1.line = k;
     c1.col = 0;
 
-    if( lines.size() > k+1 && k>0){
-        c2.line = k+1;
+    if (k < lines.size() - 1) {
+        // Delete current line along with its newline
+        c2.line = k + 1;
         c2.col = 0;
-        select(c1,c2);
-        remove();
     }
-    else if(lines.size()==k+1 && k>0){
-        c2.line = k+1;
-        c2.col=lines[k].size()-1;
-        select(c1, c2);
-        remove();
+    else {
+        // Last line: delete its contents
+        c2.line = k;
+        c2.col = lines[k].size();
+        // Include the preceding newline if possible
+        if (k > 0) {
+            c1.line = k - 1;
+            c1.col = lines[k - 1].size();
+        }
     }
+    select(c1, c2);
+    remove();
 }
