@@ -30,7 +30,10 @@ static void printHelp() {
          << "  copy | cut | paste\n"
          << "  find <word>                   list whole-word matches\n"
          << "  replace <old> <new>           replace all whole-word matches\n"
+         << "  remove                        remove the selected part of the text\n"
+         << "  delLine <k>                   deletes the kth line\n"
          << "  undo | redo\n"
+         << "  save\n"
          << "  help | quit\n";
 }
 
@@ -154,7 +157,7 @@ int main() {
         }
         else if(cmd == "delLine"){
             unsigned int k;
-            cin >> k;
+            iss >> k;
             ed.deleteLine(k);
         }
         else {
