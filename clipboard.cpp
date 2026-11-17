@@ -51,18 +51,6 @@ void Editor::paste(){
     Edit edit;
     edit.cursorBefore=cursor;
 
-    if(hasSelection){
-        Change erased;
-        erased.isInsert=false;
-        erased.pos=selStart;
-        erased.text=getRange(selStart,selEnd);
-        edit.changes.push_back(erased);
-
-        rawErase(selStart, selEnd);
-        cursor = selStart;
-        hasSelection = false;
-    }
-
     Change change;
     change.isInsert=true;
     change.pos=cursor;
