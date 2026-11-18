@@ -65,7 +65,23 @@ int main() {
         if (cmd.empty()) continue;
 
         if (cmd == "quit") {
-            break;
+            cout<<"Type 's' to save the changes and 'ns' to don't save: ";
+            string s;
+            cin>>s;
+            if(s == "s")
+            {
+                if (ed.save(fileName)) cout << "Saved.\n"; 
+                else cout << "Could not save.\n";
+                break;
+            }
+            else if (s == "ns")
+            {
+                break;
+            }
+            else
+            {
+                cout<<"Please type s or ns\n";
+            }
         }
         else if (cmd == "help") {
             printHelp();
@@ -165,10 +181,6 @@ int main() {
         }
     
     }
-
-    // 3. SAVE
-    if (ed.save(fileName)) cout << "Saved.\n"; 
-    else cout << "Could not save.\n";
 
     return 0;
 }
